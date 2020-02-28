@@ -5,26 +5,88 @@ date: "28/2/2020"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+### Load packages to be used
+```{r}
+library(SNPRelate)
+library(ape)
+library(ggplot2)
+library(readr)
 ```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+### Load data
+```{r}
+##### For use with SNPRelate
+## Create data in gds format from plink
+snpgdsBED2GDS("../data/wolf_2020_JG_plink.bed", 
+              "../data/wolf_2020_JG_plink.fam", 
+              "../data/wolf_2020_JG_plink.bim", 
+              out.gdsfn="../data/wolf_2020_JG_plink.gds", 
+              option = snpgdsOption(Z=38)) # 38 cromosomas
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r cars}
-summary(cars)
+# See summary (this does not load the file)
+snpgdsSummary("../data/wolf_2020_JG_plink.gds")
+
+# Upload file to work with
+genofile <- snpgdsOpen("../data/wolf_2020_JG_plink.gds")
+
+# Check snp.ids
+head(read.gdsn(index.gdsn(genofile, "snp.id")))
+
+# Check sample.ids
+head(read.gdsn(index.gdsn(genofile, "sample.id")))
+
+# Get gdsn sample names
+sample.id <- read.gdsn(index.gdsn(genofile, "sample.id"))
+sample.id
+
+
+
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+
+
+### Perform PCA
+
+```{r}
+# PCA
+pca <- snpgdsPCA(genofile, num.thread=2)
+
+# Calculate the% variation contained by the first components
+pc.percent <- pca$varprop*100
+head(round(pc.percent, 2))
+
+x<-round(pc.percent, 2)
+sum(x[1:4])
+sum(x[1:10])
+sum(x[1:30])
+
+
+# Put results in df
+tab <- data.frame(sample.id = pca$sample.id,
+    EV1 = pca$eigenvect[,1],    # the first eigenvector
+    EV2 = pca$eigenvect[,2],    # the second eigenvector
+    stringsAsFactors = FALSE)
+head(tab)
+
+# Plot
+ggplot(data = tab, aes(x=EV2, y=EV1)) + geom_point() +
+  ylab(paste0("eigenvector 1 explaining ", round(pc.percent, 2)[1], "%")) +
+  xlab(paste0("eigenvector 2 explaining ", round(pc.percent, 2)[2], "%"))
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+####extra graphic
+```{r}
+
+frecuencias <- read_delim("~/Desktop/ProyectoUni5/data/frecuencias.frq", 
+    "\t", escape_double = FALSE, trim_ws = TRUE)
+
+
+
+plot(frecuencias$N_CHR, frecuencias$POS)
+```
+
