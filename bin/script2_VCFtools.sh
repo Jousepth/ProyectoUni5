@@ -37,4 +37,4 @@ $vcftools --vcf ../data/wolf_2020_JG.vcf --chr chr03 --site-pi --out ../data/div
 $vcftools --vcf ../data/wolf_2020_JG.vcf --max-maf 0.05 --recode --out ../data/wolves_maf05
 
 #j) Convert the wolves_maf05.vcf file to plink format.
-$vcftools --vcf ../data/wolves_maf05.vcf.recode.vcf --plink
+$vcftools --vcf ../data/wolves_maf05.recode.vcf --plink
