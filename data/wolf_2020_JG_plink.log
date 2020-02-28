@@ -1,0 +1,16 @@
+PLINK v1.90b6.16 64-bit (17 Feb 2020)
+Options in effect:
+  --chr-set 38
+  --out ../data/wolf_2020_JG_plink
+  --vcf ../data/wolf_2020_JG.vcf
+
+Hostname: node07
+Working directory: /home/cirio/JG/ProyectoUni5/bin
+Start time: Thu Feb 27 22:58:09 2020
+
+Random number seed: 1582865889
+32011 MB RAM detected; reserving 16005 MB for main workspace.
+--vcf: ../data/wolf_2020_JG_plink.bed + ../data/wolf_2020_JG_plink.bim +
+../data/wolf_2020_JG_plink.fam written.
+
+End time: Thu Feb 27 22:58:09 2020
